@@ -1,0 +1,51 @@
+name: Verify and publish LIFE OS
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish verified site (requires owner approval)'
+        type: boolean
+        required: true
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: life-os-pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test access control and module loading
+        run: node --test tests/access-controller.test.mjs tests/cloud-foundation.test.mjs tests/module-linkage.test.mjs tests/public-build.test.mjs tests/pages-deploy.test.mjs
+      - name: Build with public configuration
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: node scripts/build-public.mjs
+      - name: Require Auth and audit static files
+        run: node scripts/build-public.mjs --check --require-auth
+      - uses: actions/configure-pages@v5
+        if: inputs.publish
+      - uses: actions/upload-pages-artifact@v4
+        if: inputs.publish
+        with:
+          path: dist
+  deploy:
+    if: inputs.publish
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish verified artifact
+        id: deployment
+        uses: actions/deploy-pages@v4
