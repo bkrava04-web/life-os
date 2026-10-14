@@ -1,0 +1,367 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LIFE OS workout program v1",
+  "type": "object",
+  "required": [
+    "format",
+    "version",
+    "program"
+  ],
+  "properties": {
+    "format": {
+      "const": "life-os-workout-program"
+    },
+    "version": {
+      "const": 1
+    },
+    "program": {
+      "$ref": "#/$defs/program"
+    }
+  },
+  "$defs": {
+    "program": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "minDurationDays",
+        "workouts"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "not": {
+            "enum": [
+              "__proto__",
+              "prototype",
+              "constructor",
+              "__defineGetter__",
+              "__defineSetter__",
+              "hasOwnProperty",
+              "__lookupGetter__",
+              "__lookupSetter__",
+              "isPrototypeOf",
+              "propertyIsEnumerable",
+              "toString",
+              "valueOf",
+              "toLocaleString"
+            ]
+          }
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150,
+          "pattern": "\\S"
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5000
+        },
+        "minDurationDays": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 365
+        },
+        "minGapDays": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 14,
+          "default": 1
+        },
+        "workouts": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "$ref": "#/$defs/workout"
+          }
+        },
+        "exam": {
+          "$ref": "#/$defs/exam"
+        }
+      }
+    },
+    "workout": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "intensity",
+        "durationMinutes",
+        "repeatCount",
+        "xp",
+        "exercises"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "not": {
+            "enum": [
+              "__proto__",
+              "prototype",
+              "constructor",
+              "__defineGetter__",
+              "__defineSetter__",
+              "hasOwnProperty",
+              "__lookupGetter__",
+              "__lookupSetter__",
+              "isPrototypeOf",
+              "propertyIsEnumerable",
+              "toString",
+              "valueOf",
+              "toLocaleString"
+            ]
+          }
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150,
+          "pattern": "\\S"
+        },
+        "intensity": {
+          "enum": [
+            "light",
+            "medium",
+            "high"
+          ]
+        },
+        "durationMinutes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1440
+        },
+        "repeatCount": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "xp": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "recommendations": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5000
+        },
+        "suitableDayTypes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "day",
+              "night",
+              "off",
+              "recovery"
+            ]
+          }
+        },
+        "exercises": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "items": {
+            "$ref": "#/$defs/exercise"
+          }
+        }
+      }
+    },
+    "exercise": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "sets"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "not": {
+            "enum": [
+              "__proto__",
+              "prototype",
+              "constructor",
+              "__defineGetter__",
+              "__defineSetter__",
+              "hasOwnProperty",
+              "__lookupGetter__",
+              "__lookupSetter__",
+              "isPrototypeOf",
+              "propertyIsEnumerable",
+              "toString",
+              "valueOf",
+              "toLocaleString"
+            ]
+          }
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "\\S"
+        },
+        "sets": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "reps": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "durationSeconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 86400
+        },
+        "restSeconds": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 3600,
+          "default": 0
+        },
+        "required": {
+          "type": "boolean",
+          "default": true
+        },
+        "recommendations": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 5000
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "reps"
+          ],
+          "properties": {
+            "reps": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            }
+          }
+        },
+        {
+          "required": [
+            "durationSeconds"
+          ],
+          "properties": {
+            "durationSeconds": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 86400
+            }
+          }
+        }
+      ]
+    },
+    "exam": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "name",
+        "criteria"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150,
+          "pattern": "\\S"
+        },
+        "criteria": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 30,
+          "items": {
+            "$ref": "#/$defs/criterion"
+          }
+        }
+      }
+    },
+    "criterion": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "unit",
+        "operator",
+        "target"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{1,100}$",
+          "not": {
+            "enum": [
+              "__proto__",
+              "prototype",
+              "constructor",
+              "__defineGetter__",
+              "__defineSetter__",
+              "hasOwnProperty",
+              "__lookupGetter__",
+              "__lookupSetter__",
+              "isPrototypeOf",
+              "propertyIsEnumerable",
+              "toString",
+              "valueOf",
+              "toLocaleString"
+            ]
+          }
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "\\S"
+        },
+        "unit": {
+          "type": "string",
+          "maxLength": 30
+        },
+        "operator": {
+          "enum": [
+            "gte",
+            "lte"
+          ]
+        },
+        "target": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000000
+        }
+      }
+    }
+  },
+  "$comment": "IDs must be unique within workouts, within exercises of each workout, and within exam criteria. Sum of repeatCount must not exceed 500. These constraints are also checked by the application."
+}
